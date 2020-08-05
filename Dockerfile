@@ -12,4 +12,4 @@ RUN apt install curl -y
 
 RUN apt install libtool libtool-bin -y
 
-RUN apt install ros-${ROS_VERSION}-geometry -y
+RUN apt install ros-${ROS_VERSION}-geometry ros-${ROS_VERSION}-rviz -y
