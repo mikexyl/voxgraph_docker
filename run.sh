@@ -2,8 +2,8 @@
 make build
 
 XAUTH=/tmp/.docker.xauth
-touch ${XAUTH} 
-xauth nlist ${DISPLAY} | sed -e 's/^..../ffff/' | xauth -f ${XAUTH} nmerge -
+#touch ${XAUTH} 
+#xauth nlist ${DISPLAY} | sed -e 's/^..../ffff/' | xauth -f ${XAUTH} nmerge -
 
 docker run -it --name voxgrah  --rm \
    --privileged \
