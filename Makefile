@@ -15,7 +15,7 @@ run-root: build
 	   --volume="$(XAUTH):$(XAUTH)" \
 	   --runtime=nvidia \
 	   -e HOME=${HOME} \
-	   -v "${HOME}/Workspace:${HOME}/Workspace" \
+	   -v "${HOME}:${HOME}/Workspace/mrslam/voxgraph_ws" \
 	   -v /etc/group:/etc/group:ro \
 	   -v /etc/localtime:/etc/localtime \
 	   -v /etc/passwd:/etc/passwd:ro \
@@ -36,7 +36,7 @@ run:
 	   --volume="$(XAUTH):$(XAUTH)" \
 	   --runtime=nvidia \
 	   -e HOME=${HOME} \
-	   -v "${HOME}/Workspace:${HOME}/Workspace" \
+	   -v "${HOME}:${HOME}/Workspace/mrslam/voxgraph_ws" \
 	   -u $(shell id -u ${USER} ):$(shell id -g ${USER}) \
 	   -v /etc/group:/etc/group:ro \
 	   -v /etc/localtime:/etc/localtime \
