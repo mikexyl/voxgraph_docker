@@ -1,4 +1,4 @@
-.PHONY: build run-root run attach start stop
+.PHONY: build run-root run attach
 
 XAUTH:=/tmp/.docker.xauth
 DOCKER_NAME:=voxgraph
@@ -49,27 +49,4 @@ run:
 attach:
 	docker exec -it $(DOCKER_NAME) /bin/bash
 
-start:
-	make build
-	#touch $(XAUTH)
-	#xauth nlist ${DISPLAY} | sed -e 's/^..../ffff/' | xauth -f $(XAUTH) nmerge - 
-	docker start -it --name $(DOCKER_NAME)  --rm \
-	   --env="DISPLAY=$DISPLAY" \
-	   --env="QT_X11_NO_MITSHM=1" \
-	   --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-	   -e XAUTHORITY=$(XAUTH) \
-	   --volume="$(XAUTH):$(XAUTH)" \
-	   --runtime=nvidia \
-	   -e HOME=${HOME} \
-	   -v "${HOME}:${HOME}/" \
-	   -u $(shell id -u ${USER} ):$(shell id -g ${USER}) \
-	   -v /etc/group:/etc/group:ro \
-	   -v /etc/localtime:/etc/localtime \
-	   -v /etc/passwd:/etc/passwd:ro \
-	   --security-opt seccomp=unconfined \
-	   --net=host \
-	   --privileged \
-	   $(DOCKER_NAME)
 
-stop:
-	docker stop $(DOCKER_NAME)
