@@ -1,8 +1,8 @@
-FROM osrf/ros:melodic-desktop-full
+FROM ros:kinetic-perception-xenial
 
 ENV UBUNTU_VERSION=xenial
 
-ENV ROS_VERSION=melodic
+ENV ROS_VERSION=kinetic
 
 RUN apt update && apt install python-catkin-tools wget -y
 
@@ -30,11 +30,13 @@ RUN usermod -a -G dialout $myuser
 # voxblox++ dependencies
 RUN apt update
 RUN apt install python-dev python-pip python-wstool protobuf-compiler dh-autoreconf -y
-RUN pip2 install 'protobuf>=3.0.0a3' scipy scikit-image ipython 'keras==2.1.6'
+# RUN pip2 install 'protobuf>=3.0.0a3' scipy scikit-image ipython 'keras==2.1.6'
 RUN pip2 install tensorflow-gpu
+RUN pip2 install 'protobuf>=3.0.0a3'  
+RUN pip2 install scikit-image ipython 'keras==2.1.6'
 
-RUN apt install gcc-8 g++-8 -y
+#RUN apt install gcc-8 g++-8 -y
 
-RUN apt install libvtk6-dev libvtk6-qt-dev -y
+#RUN apt install libvtk6-dev libvtk6-qt-dev -y
 
-RUN apt update && apt install clang -y
+#RUN apt update && apt install clang -y
