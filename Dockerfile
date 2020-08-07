@@ -1,6 +1,6 @@
-FROM ros:melodic-perception-bionic
+FROM osrf/ros:melodic-desktop-full
 
-ENV UBUNTU_VERSION=bionic
+ENV UBUNTU_VERSION=xenial
 
 ENV ROS_VERSION=melodic
 
@@ -26,3 +26,15 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 RUN usermod -a -G dialout $myuser
+
+# voxblox++ dependencies
+RUN apt update
+RUN apt install python-dev python-pip python-wstool protobuf-compiler dh-autoreconf -y
+RUN pip2 install 'protobuf>=3.0.0a3' scipy scikit-image ipython 'keras==2.1.6'
+RUN pip2 install tensorflow-gpu
+
+RUN apt install gcc-8 g++-8 -y
+
+RUN apt install libvtk6-dev libvtk6-qt-dev -y
+
+RUN apt update && apt install clang -y

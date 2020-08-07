@@ -35,7 +35,7 @@ run:
 	   --runtime=nvidia \
 	   -e HOME=${HOME} \
 	   -v "${HOME}:${HOME}/" \
-	   -u $(shell id -u ${USER} ):$(shell id -g ${USER}) \
+	   -u ${shell whoami} \
 	   -v /etc/localtime:/etc/localtime \
 	   --security-opt seccomp=unconfined \
 	   --net=host \
