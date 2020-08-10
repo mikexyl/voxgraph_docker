@@ -1,6 +1,7 @@
 FROM ros_cuda
 
 # maskgraph
+# generic tools
 ENV UBUNTU_VERSION=bionic
 
 ENV ROS_VERSION=melodic
@@ -15,6 +16,7 @@ RUN apt install libtool libtool-bin -y
 
 RUN apt install ros-${ROS_VERSION}-geometry ros-${ROS_VERSION}-rviz -y
 
+# add user
 ARG myuser
 ARG USERNAME=$myuser
 ARG USER_UID=1000
@@ -40,13 +42,10 @@ RUN pip2 install tensorflow-gpu==1.15.0
 
 RUN apt install libblas3 liblapack3 -y
 
-# RUN apt-get install apt-transport-https ca-certificates gnupg software-properties-common wget -y && \
-# wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
-# apt-add-repository 'deb https://apt.kitware.com/ubuntu/ xenial main' && \
-# apt update && apt install cmake -y
+# install and config ccache
+RUN apt install ccache -y
+ENV PATH "/usr/lib/ccache:$PATH"
+RUN ccache --max-size=10G
 
-# # setup entrypoint
-# COPY ./ros_entrypoint.sh /
-
-ENTRYPOINT ["/ros_entrypoint.sh"]
-CMD ["bash"]
+ENTRYPOINT [ "/ros_entrypoint.sh" ]
+CMD [ "bash" ]
