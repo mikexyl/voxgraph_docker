@@ -66,11 +66,23 @@ RUN apt-get update && apt-get install -y \
     mesa-utils && \
     rm -rf /var/lib/apt/lists/*
 
-# upgrade cmake to avoid cmake bug
-# RUN apt-get install apt-transport-https ca-certificates gnupg software-properties-common wget -y && \
-# wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
-# apt-add-repository 'deb https://apt.kitware.com/ubuntu/ xenial main' && \
-# apt update && apt install cmake -y
+# orb_slam2_ros dependencies
+RUN apt update
+RUN apt-get install software-properties-common apt-utils -y
+
+# Set up Melodic keys
+RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+
+# Set up realsense keys
+RUN apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C8B3A55A6F3EFCDE
+
+#Add realsense repo
+RUN add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo bionic main" -u
+
+# Install required realsense and ROS packages
+RUN apt-get update && \
+    apt-get install librealsense2-dkms librealsense2-utils librealsense2-dev librealsense2-dbg python-catkin-tools -y
 
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]

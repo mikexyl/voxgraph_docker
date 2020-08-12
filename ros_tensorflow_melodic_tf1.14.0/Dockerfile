@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:1.15.2-gpu
+FROM daocloud.io/daocloud/tensorflow:1.14.0-gpu
 
 RUN rm /etc/apt/sources.list.d/cuda.list
 RUN rm /etc/apt/sources.list.d/nvidia-ml.list
