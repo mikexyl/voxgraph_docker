@@ -141,5 +141,7 @@ RUN add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/a
 RUN apt-get update && \
     apt-get install librealsense2-dkms librealsense2-utils librealsense2-dev librealsense2-dbg python-catkin-tools -y
 
+RUN apt update && apt install ros-${ROS_VERSION}-ddynamic-reconfigure ros-${ROS_VERSION}-diagnostics -y
+
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]
