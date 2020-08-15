@@ -1,7 +1,6 @@
 ARG TF_SET_VERSION=1.5.1
 ARG ROS_SET_VERSION=kinetic
 ARG UBUNTU_SET_VERSION=xenial
-
 # Build libglvnd
 FROM ubuntu:16.04 as glvnd
 
@@ -46,7 +45,6 @@ ARG TF_SET_VERSION
 ARG ROS_SET_VERSION
 ARG UBUNTU_SET_VERSION
 FROM ros-tensorflow:$ROS_SET_VERSION-tf$TF_SET_VERSION
-
 LABEL maintainer "NVIDIA CORPORATION <cudatools@nvidia.com>"
 
 COPY --from=glvnd /usr/local/lib/x86_64-linux-gnu /usr/local/lib/x86_64-linux-gnu
@@ -59,7 +57,6 @@ RUN echo '/usr/local/lib/x86_64-linux-gnu' >> /etc/ld.so.conf.d/glvnd.conf && \
     ldconfig
 
 ENV LD_LIBRARY_PATH /usr/local/lib/x86_64-linux-gnu:/usr/local/lib/i386-linux-gnu${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-
 ARG TF_SET_VERSION
 ARG ROS_SET_VERSION
 ARG UBUNTU_SET_VERSION
@@ -99,6 +96,7 @@ RUN apt update
 # RUN apt install python-dev python-pip python-wstool protobuf-compiler dh-autoreconf -y
 # RUN pip2 install --upgrade pip
 RUN pip2 install scikit-image scikit-learn h5py ipython 'keras==2.1.6' scipy
+
 RUN pip2 install 'opencv-python==3.4.2.17'
 
 # RUN pip2 install --ignore-installed enum34
@@ -140,8 +138,11 @@ RUN add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/a
 # Install required realsense and ROS packages
 RUN apt-get update && \
     apt-get install librealsense2-dkms librealsense2-utils librealsense2-dev librealsense2-dbg python-catkin-tools -y
-
+    
 RUN apt update && apt install ros-${ROS_VERSION}-ddynamic-reconfigure ros-${ROS_VERSION}-diagnostics -y
+
+COPY ./maskgraph_entrypoint.sh /
+RUN chmod +x /maskgraph_entrypoint.sh
 
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]

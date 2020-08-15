@@ -1,7 +1,7 @@
 .PHONY: build run-root run attach run-nvidia
 
 XAUTH:=/tmp/.docker.xauth
-DOCKER_NAME:=ros-tensorflow:kinetic-tf1.6.0
+DOCKER_NAME:=ros-tensorflow:kinetic-tf1.5.1
 
 build:
 	docker build -t $(DOCKER_NAME) .

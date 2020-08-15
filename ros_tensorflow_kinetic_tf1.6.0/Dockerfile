@@ -31,7 +31,7 @@ ENV ROS_DISTRO kinetic
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-$ROS_DISTRO-ros-core=1.3.2-0* \
+    ros-kinetic-ros-core=1.3.2-0* \
     && rm -rf /var/lib/apt/lists/*
 
 # ros-base
@@ -49,14 +49,14 @@ RUN rosdep init && \
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-$ROS_DISTRO-ros-base=1.3.2-0* \
+    ros-kinetic-ros-base=1.3.2-0* \
     && rm -rf /var/lib/apt/lists/*
 
-# $ROS_DISTRO-perception
+# kinetic-perception
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-$ROS_DISTRO-perception=1.3.2-0* \
+    ros-kinetic-perception=1.3.2-0* \
     && rm -rf /var/lib/apt/lists/*
 
 # setup entrypoint
