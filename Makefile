@@ -35,13 +35,12 @@ run:
 	make build
 	#touch $(XAUTH)
 	#xauth nlist ${DISPLAY} | sed -e 's/^..../ffff/' | xauth -f $(XAUTH) nmerge - 
-	nvidia-docker run -it --name voxgraph  --rm \
+	nvidia-docker run -it --gpus all --name voxgraph  --rm \
 	   --env="DISPLAY=${DISPLAY}" \
 	   --env="QT_X11_NO_MITSHM=1" \
 	   --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
 	   -e XAUTHORITY=$(XAUTH) \
 	   --volume="$(XAUTH):$(XAUTH)" \
-	   --runtime=nvidia \
 	   -e HOME=${HOME} \
 	   -u ${shell whoami} \
 	   -v /etc/localtime:/etc/localtime \

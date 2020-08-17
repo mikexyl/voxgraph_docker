@@ -142,7 +142,10 @@ RUN apt-get update && \
 RUN apt update && apt install ros-${ROS_VERSION}-ddynamic-reconfigure ros-${ROS_VERSION}-diagnostics -y
 
 COPY ./maskgraph_entrypoint.sh /
-RUN chmod +x /maskgraph_entrypoint.sh
+COPY ./maskgraph_startup.sh /
+COPY ./orbslam_entrypoint.sh /
+COPY ./orbslam_startup.sh /
 
+RUN mkdir -p /workspaces/maskgraph_ws
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]
