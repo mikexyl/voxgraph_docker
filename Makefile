@@ -8,8 +8,9 @@ DOCKER_NAME:=voxgraph:$(ROS_VERSION)-tf$(TF_VERSION)
 ROS_PACKAGE:=perception
 
 build:
-	@docker build -t ros-tensorflow:$(ROS_VERSION)-tf$(TF_VERSION)-cpu ros_tensorflow_$(ROS_VERSION)_tf$(TF_VERSION)_cpu/.
+	@docker build -t ros-tensorflow:$(ROS_VERSION)-tf$(TF_VERSION) ros_tensorflow_$(ROS_VERSION)_tf$(TF_VERSION)/.
 	@docker build --build-arg myuser=${shell whoami} \
+		--build-arg TF_SET_VERSION=$(TF_VERSION)\
 		--build-arg ROS_SET_VERSION=$(ROS_VERSION)\
 		--build-arg UBUNTU_SET_VERSION=$(UBUNTU_VERSION)\
 		-t $(DOCKER_NAME)-$(ROS_PACKAGE) .
@@ -34,7 +35,7 @@ run:
 	make build
 	#touch $(XAUTH)
 	#xauth nlist ${DISPLAY} | sed -e 's/^..../ffff/' | xauth -f $(XAUTH) nmerge - 
-	docker run -it --name voxgraph  --rm \
+	nvidia-docker run -it --gpus all --name voxgraph  --rm \
 	   --env="DISPLAY=${DISPLAY}" \
 	   --env="QT_X11_NO_MITSHM=1" \
 	   --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
@@ -43,7 +44,6 @@ run:
 	   -e HOME=${HOME} \
 	   -u ${shell whoami} \
 	   -v /etc/localtime:/etc/localtime \
-	   -v ${HOME}/Workspace:${HOME}/Workspace \
 	   --security-opt seccomp=unconfined \
 	   --net=host \
 	   --privileged \
