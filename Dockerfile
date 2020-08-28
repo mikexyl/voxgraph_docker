@@ -149,6 +149,8 @@ COPY ./orbslam_entrypoint.sh /
 COPY ./orbslam_startup.sh /
 COPY ./voxgraph_orbslam_rs_startup.sh /
 COPY ./voxgraph_orbslam_rs.launch /
+COPY ./rs_bagrecord_startup.sh /
+COPY ./rs_bagrecord.launch /
 
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]
