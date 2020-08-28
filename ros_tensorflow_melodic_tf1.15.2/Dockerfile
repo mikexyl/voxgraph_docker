@@ -1,7 +1,4 @@
-FROM tensorflow/tensorflow:1.15.2-gpu
-
-RUN rm /etc/apt/sources.list.d/cuda.list
-RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+FROM nvcr.io/nvidia/l4t-tensorflow:r32.4.3-tf1.15-py3
 
 # ros-core
 # setup timezone

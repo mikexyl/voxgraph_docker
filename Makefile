@@ -1,10 +1,10 @@
 .PHONY: build run-root run attach run-nvidia
 
 XAUTH:=/tmp/.docker.xauth
-TF_VERSION:=1.6.0
-ROS_VERSION:=kinetic
-UBUNTU_VERSION:=xenial
-DOCKER_NAME:=voxgraph:$(ROS_VERSION)-tf$(TF_VERSION)
+TF_VERSION:=1.15.2
+ROS_VERSION:=melodic
+UBUNTU_VERSION:=bionic
+DOCKER_NAME:=voxgraph:$(ROS_VERSION)-tf$(TF_VERSION)-l4t
 ROS_PACKAGE:=perception
 
 build:
@@ -35,7 +35,8 @@ run:
 	make build
 	#touch $(XAUTH)
 	#xauth nlist ${DISPLAY} | sed -e 's/^..../ffff/' | xauth -f $(XAUTH) nmerge - 
-	nvidia-docker run -it --gpus all --name voxgraph  --rm \
+	nvidia-docker run -it --name voxgraph  --rm \
+	   --runtime nvidia \
 	   --env="DISPLAY=${DISPLAY}" \
 	   --env="QT_X11_NO_MITSHM=1" \
 	   --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
