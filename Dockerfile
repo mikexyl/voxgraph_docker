@@ -152,5 +152,12 @@ COPY ./voxgraph_orbslam_rs.launch /
 COPY ./rs_bagrecord_startup.sh /
 COPY ./rs_bagrecord.launch /
 
+#upgrade cmake to compile voxblox:feature/temporal_window
+RUN apt update && apt install apt-transport-https ca-certificates gnupg software-properties-common wget -y && \
+        wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
+        apt-add-repository 'deb https://apt.kitware.com/ubuntu/ xenial main' && \
+        apt-get update && \
+        apt upgrade cmake -y
+
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]
