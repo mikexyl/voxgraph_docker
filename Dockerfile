@@ -104,11 +104,6 @@ RUN pip2 install 'opencv-python==3.4.2.17'
 
 RUN apt install libblas-dev liblapack-dev -y
 
-# install and config ccache
-RUN apt install ccache -y
-ENV PATH "/usr/lib/ccache:$PATH"
-RUN ccache --max-size=10G
-
 # nvidia-container-runtime
 ENV NVIDIA_VISIBLE_DEVICES \
     ${NVIDIA_VISIBLE_DEVICES:-all}
@@ -121,7 +116,7 @@ RUN apt-get update && apt-get install -y \
     mesa-utils && \
     rm -rf /var/lib/apt/lists/*
 
-# orb_slam2_ros dependencies
+# orb_slasfasros dependencies
 RUN apt update
 RUN apt-get install software-properties-common apt-utils -y
 
@@ -143,6 +138,11 @@ RUN apt update && apt install ros-${ROS_VERSION}-ddynamic-reconfigure ros-${ROS_
 
 RUN apt update && apt install ros-${ROS_VERSION}-rgbd-launch -y
 
+# install and config ccache
+RUN apt install ccache -y
+ENV PATH "/usr/lib/ccache:$PATH"
+RUN ccache --max-size=10G
+
 COPY ./maskgraph_entrypoint.sh /
 COPY ./maskgraph_startup.sh /
 COPY ./orbslam_entrypoint.sh /
@@ -152,12 +152,11 @@ COPY ./voxgraph_orbslam_rs.launch /
 COPY ./rs_bagrecord_startup.sh /
 COPY ./rs_bagrecord.launch /
 
-#upgrade cmake to compile voxblox:feature/temporal_window
-RUN apt update && apt install apt-transport-https ca-certificates gnupg software-properties-common wget -y && \
-        wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
-        apt-add-repository 'deb https://apt.kitware.com/ubuntu/ xenial main' && \
-        apt-get update && \
-        apt upgrade cmake -y
+RUN mkdir -p /home/${USERNAME}
+ENV HOME "/home/lxy/"
+RUN touch ${HOME}/.bashrc
+RUN echo 'source /opt/ros/kinetic/setup.bash' >> /root/.bashrc
+RUN echo 'source /opt/ros/kinetic/setup.bash' >> ${HOME}/.bashrc
 
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]
