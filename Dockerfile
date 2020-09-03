@@ -138,10 +138,14 @@ RUN apt update && apt install ros-${ROS_VERSION}-ddynamic-reconfigure ros-${ROS_
 
 RUN apt update && apt install ros-${ROS_VERSION}-rgbd-launch -y
 
+RUN apt update && apt install libtbb-dev -y
+
+RUN apt update && apt install ros-${ROS_VERSION}-desktop-full -y
+
 # install and config ccache
-RUN apt install ccache -y
-ENV PATH "/usr/lib/ccache:$PATH"
-RUN ccache --max-size=10G
+#RUN apt install ccache -y
+#ENV PATH "/usr/lib/ccache:$PATH"
+#RUN ccache --max-size=10G
 
 COPY ./maskgraph_entrypoint.sh /
 COPY ./maskgraph_startup.sh /
