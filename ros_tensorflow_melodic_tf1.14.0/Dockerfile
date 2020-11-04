@@ -44,8 +44,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && rm -rf /var/lib/apt/lists/*
 
 # bootstrap rosdep
-RUN rosdep init && \
+RUN export https_proxy="https://10.78.92.79:58088" && rosdep init && \
   rosdep update --rosdistro $ROS_DISTRO
+RUN unset https_proxy
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \

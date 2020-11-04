@@ -120,7 +120,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt update
 RUN apt-get install software-properties-common apt-utils -y
 
-# Set up Melodic keys
+# Set up ${ROS_VERSION} keys
 RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 
 # Set up realsense keys
@@ -133,19 +133,24 @@ RUN add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/a
 # Install required realsense and ROS packages
 RUN apt-get update && \
     apt-get install librealsense2-dkms librealsense2-utils librealsense2-dev librealsense2-dbg python-catkin-tools -y
-    
-RUN apt update && apt install ros-${ROS_VERSION}-ddynamic-reconfigure ros-${ROS_VERSION}-diagnostics -y
 
-RUN apt update && apt install ros-${ROS_VERSION}-rgbd-launch -y
+RUN apt update && apt install -y ros-${ROS_VERSION}-ddynamic-reconfigure ros-${ROS_VERSION}-diagnostics \
+        ros-${ROS_VERSION}-rgbd-launch libtbb-dev ros-${ROS_VERSION}-desktop-full && apt clean
 
-RUN apt update && apt install libtbb-dev -y
+# mrcoord deps
+RUN apt update && apt install libv4l-dev libsuitesparse-dev libnlopt-dev \
+        python-catkin-tools python-wstool ros-${ROS_VERSION}-joy \
+        ros-${ROS_VERSION}-octomap-ros protobuf-compiler libgoogle-glog-dev \ 
+        ros-${ROS_VERSION}-mav-msgs ros-${ROS_VERSION}-mav-planning-msgs \ 
+        ros-${ROS_VERSION}-sophus ros-${ROS_VERSION}-robot ros-${ROS_VERSION}-hector-gazebo-plugins \
+        libatlas-base-dev python-matplotlib python-numpy liblapacke-dev \
+        libode4 libopenexr-dev libglm-dev libblas-dev libatlas-base-dev libopenblas-dev liblapacke-dev libbullet-dev -y && apt clean
 
-RUN apt update && apt install ros-${ROS_VERSION}-desktop-full -y
-
-# install and config ccache
-#RUN apt install ccache -y
-#ENV PATH "/usr/lib/ccache:$PATH"
-#RUN ccache --max-size=10G
+# ompl 1.2.3
+WORKDIR /
+RUN export http_proxy=http://10.78.92.79:58088 && export https_proxy=https://10.78.92.79:58088 && git clone https://github.com/ompl/ompl.git && cd ompl && git checkout 1.2.3 && unset http_proxy
+RUN apt update && apt install -y castxml doxygen python3-pip && pip3 install pygccxml pyplusplus
+RUN cd ompl && mkdir -p build/Release && cd build/Release && cmake ../.. -DCMAKE_INSTALL_PREFIX=/usr && make -j12 && make install
 
 COPY ./maskgraph_entrypoint.sh /
 COPY ./maskgraph_startup.sh /
@@ -156,11 +161,16 @@ COPY ./voxgraph_orbslam_rs.launch /
 COPY ./rs_bagrecord_startup.sh /
 COPY ./rs_bagrecord.launch /
 
-RUN mkdir -p /home/${USERNAME}
-ENV HOME "/home/lxy/"
+ENV HOME "/home/${USERNAME}/"
+RUN mkdir -p ${HOME}
 RUN touch ${HOME}/.bashrc
 RUN echo 'source /opt/ros/kinetic/setup.bash' >> /root/.bashrc
 RUN echo 'source /opt/ros/kinetic/setup.bash' >> ${HOME}/.bashrc
+
+# install and config ccache
+RUN apt install ccache -y
+ENV PATH "/usr/lib/ccache:$PATH"
+RUN ccache --max-size=10G && chown -R ${USERNAME} /home/${USERNAME}/.ccache
 
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]

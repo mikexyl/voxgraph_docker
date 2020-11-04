@@ -44,6 +44,7 @@ run:
 	   -e HOME=${HOME} \
 	   -u ${shell whoami} \
 	   -v /etc/localtime:/etc/localtime \
+	   -v ${HOME}/Workspace/mrslam/multi_robot_coordination_ws:${HOME}/Workspace/mrslam/multi_robot_coordination_ws \
 	   --security-opt seccomp=unconfined \
 	   --net=host \
 	   --privileged \
