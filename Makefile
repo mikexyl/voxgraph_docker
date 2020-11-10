@@ -1,9 +1,9 @@
 .PHONY: build run-root run attach run-nvidia
 
 XAUTH:=/tmp/.docker.xauth
-TF_VERSION:=1.6.0
-ROS_VERSION:=kinetic
-UBUNTU_VERSION:=xenial
+TF_VERSION:=1.14.0
+ROS_VERSION:=melodic
+UBUNTU_VERSION:=bionic
 DOCKER_NAME:=voxgraph:$(ROS_VERSION)-tf$(TF_VERSION)
 ROS_PACKAGE:=perception
 
