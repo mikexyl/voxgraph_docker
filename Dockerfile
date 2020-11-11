@@ -68,8 +68,15 @@ RUN apt update && apt install -y ros-${ROS_VERSION}-ddynamic-reconfigure ros-${R
         ros-${ROS_VERSION}-rgbd-launch libtbb-dev ros-${ROS_VERSION}-desktop-full && apt clean
 
 # mrcoord deps
-RUN apt update && apt install git libv4l-dev libsuitesparse-dev libnlopt-dev python-catkin-tools python-wstool ros-melodic-joy ros-melodic-octomap-ros protobuf-compiler libgoogle-glog-dev ros-melodic-mav-msgs ros-melodic-mav-planning-msgs ros-melodic-sophus ros-melodic-hector-gazebo-plugins libatlas-base-dev python-matplotlib python-numpy \
-  liblapacke-dev libode6 libompl-dev libompl12 libopenexr-dev libglm-dev -y && apt clean
+RUN apt update && apt install git libv4l-dev libsuitesparse-dev libnlopt-dev python-catkin-tools python-wstool ros-melodic-joy ros-melodic-octomap-ros ros-melodic-mav-msgs ros-melodic-mav-planning-msgs ros-melodic-sophus ros-melodic-hector-gazebo-plugins libatlas-base-dev python-matplotlib python-numpy \
+  liblapacke-dev libode6 libompl-dev libompl12 libopenexr-dev libglm-dev libunwind-dev -y && apt clean
+
+# rotors joystick deps
+RUN pip install pygame -i https://pypi.tuna.tsinghua.edu.cn/simple
+WORKDIR /
+RUN  git clone https://github.com/devbharat/python-uinput.git && \ 
+        cd python-uinput && python setup.py build && python setup.py install && \
+        addgroup uinput && adduser $USERNAME uinput
 
 COPY ./maskgraph_entrypoint.sh /
 COPY ./maskgraph_startup.sh /
@@ -81,15 +88,12 @@ COPY ./rs_bagrecord_startup.sh /
 COPY ./rs_bagrecord.launch /
 
 ENV HOME "/home/${USERNAME}/"
-RUN mkdir -p ${HOME}
-RUN touch ${HOME}/.bashrc
-RUN echo 'source /opt/ros/melodic/setup.bash' >> /root/.bashrc
-RUN echo 'source /opt/ros/melodic/setup.bash' >> ${HOME}/.bashrc
+RUN mkdir -p ${HOME} && touch ${HOME}/.bashrc && echo 'source /opt/ros/melodic/setup.bash' >> /root/.bashrc && \
+        echo 'source /opt/ros/melodic/setup.bash' >> ${HOME}/.bashrc && chown -R lxy ${HOME}
 
 # install and config ccache
-RUN apt install ccache -y
 ENV PATH "/usr/lib/ccache:$PATH"
-RUN ccache --max-size=10G && chown -R ${USERNAME} /home/${USERNAME}/.ccache
+RUN apt install ccache -y && ccache --max-size=10G && chown -R ${USERNAME} /home/${USERNAME}/.ccache
 
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]
