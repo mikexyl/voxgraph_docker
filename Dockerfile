@@ -68,7 +68,7 @@ RUN apt update && apt install -y ros-${ROS_VERSION}-ddynamic-reconfigure ros-${R
         ros-${ROS_VERSION}-rgbd-launch libtbb-dev ros-${ROS_VERSION}-desktop-full && apt clean
 
 # mrcoord deps
-RUN apt update && apt install git libv4l-dev libsuitesparse-dev libnlopt-dev python-catkin-tools python-wstool ros-melodic-joy ros-melodic-octomap-ros ros-melodic-mav-msgs ros-melodic-mav-planning-msgs ros-melodic-sophus ros-melodic-hector-gazebo-plugins libatlas-base-dev python-matplotlib python-numpy \
+RUN apt update && apt install ros-melodic-gazebo-plugins git libv4l-dev libsuitesparse-dev libnlopt-dev python-catkin-tools python-wstool ros-melodic-joy ros-melodic-octomap-ros ros-melodic-mav-msgs ros-melodic-mav-planning-msgs ros-melodic-sophus ros-melodic-hector-gazebo-plugins libatlas-base-dev python-matplotlib python-numpy \
   liblapacke-dev libode6 libompl-dev libompl12 libopenexr-dev libglm-dev libunwind-dev -y && apt clean
 
 # rotors joystick deps
@@ -77,8 +77,6 @@ WORKDIR /
 RUN  git clone https://github.com/devbharat/python-uinput.git && \ 
         cd python-uinput && python setup.py build && python setup.py install && \
         addgroup uinput && adduser $USERNAME uinput
-
-RUN apt update && apt remove -y libopencv-dev && apt clean
 
 COPY ./maskgraph_entrypoint.sh /
 COPY ./maskgraph_startup.sh /
@@ -91,7 +89,7 @@ COPY ./rs_bagrecord.launch /
 
 ENV HOME "/home/${USERNAME}/"
 RUN mkdir -p ${HOME} && touch ${HOME}/.bashrc && echo 'source /opt/ros/melodic/setup.bash' >> /root/.bashrc && \
-        echo 'source /opt/ros/melodic/setup.bash' >> ${HOME}/.bashrc && chown -R lxy ${HOME}
+        echo 'source /opt/ros/melodic/setup.bash' >> ${HOME}/.bashrc && chown -R ${USERNAME} ${HOME}
 
 # install and config ccache
 ENV PATH "/usr/lib/ccache:$PATH"
