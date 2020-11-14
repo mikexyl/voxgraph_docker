@@ -78,6 +78,8 @@ RUN  git clone https://github.com/devbharat/python-uinput.git && \
         cd python-uinput && python setup.py build && python setup.py install && \
         addgroup uinput && adduser $USERNAME uinput
 
+RUN apt update && apt remove -y libopencv-dev && apt clean
+
 COPY ./maskgraph_entrypoint.sh /
 COPY ./maskgraph_startup.sh /
 COPY ./orbslam_entrypoint.sh /
