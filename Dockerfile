@@ -93,7 +93,7 @@ RUN mkdir -p ${HOME} && touch ${HOME}/.bashrc && echo 'source /opt/ros/melodic/s
 
 # install and config ccache
 ENV PATH "/usr/lib/ccache:$PATH"
-RUN apt install ccache -y && ccache --max-size=10G && chown -R ${USERNAME} /home/${USERNAME}/.ccache
+RUN apt install clang ccache -y && ccache --max-size=10G && chown -R ${USERNAME} /home/${USERNAME}/.ccache
 
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]
