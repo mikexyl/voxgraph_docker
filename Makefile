@@ -1,10 +1,10 @@
 .PHONY: build run-root run attach run-nvidia
 
 XAUTH:=/tmp/.docker.xauth
-TF_VERSION:=1.15.2
+TF_VERSION:=1.14.0
 ROS_VERSION:=melodic
 UBUNTU_VERSION:=bionic
-DOCKER_NAME:=voxgraph:$(ROS_VERSION)-tf$(TF_VERSION)-l4t
+DOCKER_NAME:=voxgraph:$(ROS_VERSION)-tf$(TF_VERSION)
 ROS_PACKAGE:=perception
 
 build:
@@ -35,8 +35,7 @@ run:
 	make build
 	#touch $(XAUTH)
 	#xauth nlist ${DISPLAY} | sed -e 's/^..../ffff/' | xauth -f $(XAUTH) nmerge - 
-	nvidia-docker run -it --name voxgraph  --rm \
-	   --runtime nvidia \
+	nvidia-docker run -it --gpus all --name voxgraph  --rm \
 	   --env="DISPLAY=${DISPLAY}" \
 	   --env="QT_X11_NO_MITSHM=1" \
 	   --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
@@ -45,6 +44,7 @@ run:
 	   -e HOME=${HOME} \
 	   -u ${shell whoami} \
 	   -v /etc/localtime:/etc/localtime \
+	   -v ${HOME}/Workspace/mrslam/multi_robot_coordination_ws:${HOME}/Workspace/mrslam/multi_robot_coordination_ws \
 	   --security-opt seccomp=unconfined \
 	   --net=host \
 	   --privileged \
