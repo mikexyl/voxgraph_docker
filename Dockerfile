@@ -95,5 +95,8 @@ RUN mkdir -p ${HOME} && touch ${HOME}/.bashrc && echo 'source /opt/ros/melodic/s
 ENV PATH "/usr/lib/ccache:$PATH"
 RUN apt install clang ccache -y && ccache --max-size=10G && chown -R ${USERNAME} /home/${USERNAME}/.ccache
 
+RUN python -m pip install glog evo==1.12.0 -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD [ "bash" ]
