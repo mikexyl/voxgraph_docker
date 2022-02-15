@@ -1,7 +1,4 @@
-FROM tensorflow/tensorflow:1.15.2-gpu
-
-RUN rm /etc/apt/sources.list.d/cuda.list
-RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+FROM nvidia/cuda:11.4.0-cudnn8-devel-ubuntu18.04
 
 # ros-core
 # setup timezone
@@ -31,7 +28,7 @@ ENV ROS_DISTRO melodic
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-melodic-ros-core=1.4.1-0* \
+    ros-melodic-ros-core \
     && rm -rf /var/lib/apt/lists/*
 
 # ros-base
@@ -41,6 +38,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     python-rosdep \
     python-rosinstall \
     python-vcstools \
+    libnvidia-gl-470 \
     && rm -rf /var/lib/apt/lists/*
 
 # bootstrap rosdep
@@ -49,14 +47,14 @@ RUN rosdep init && \
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-melodic-ros-base=1.4.1-0* \
+    ros-melodic-ros-base \
     && rm -rf /var/lib/apt/lists/*
 
 # melodic-perception
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-melodic-perception=1.4.1-0* \
+    ros-melodic-perception \
     && rm -rf /var/lib/apt/lists/*
 
 # setup entrypoint

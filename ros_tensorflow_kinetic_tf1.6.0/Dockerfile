@@ -1,4 +1,4 @@
-FROM daocloud.io/daocloud/tensorflow:1.6.0-devel-gpu
+FROM tensorflow/tensorflow:1.6.0-devel-gpu
 
 RUN rm /etc/apt/sources.list.d/cuda.list
 RUN rm /etc/apt/sources.list.d/nvidia-ml.list
@@ -44,9 +44,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && rm -rf /var/lib/apt/lists/*
 
 # bootstrap rosdep
-RUN export https_proxy="https://10.78.92.79:58088" && rosdep init && \
+RUN rosdep init && \
   rosdep update --rosdistro $ROS_DISTRO
-RUN unset https_proxy
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -59,6 +58,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-kinetic-perception=1.3.2-0* \
     && rm -rf /var/lib/apt/lists/*
+
+# add user
+ARG myuser=mikexyl
+ARG USERNAME=$myuser
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+RUN usermod -a -G dialout $myuser
+
+# nvidia-container-runtime
+ENV NVIDIA_VISIBLE_DEVICES \
+    ${NVIDIA_VISIBLE_DEVICES:-all}
+ENV NVIDIA_DRIVER_CAPABILITIES \
+    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
 
 # setup entrypoint
 COPY ./ros_entrypoint.sh /

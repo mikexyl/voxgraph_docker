@@ -1,4 +1,4 @@
-FROM daocloud.io/daocloud/tensorflow:1.14.0-gpu
+FROM tensorflow/tensorflow:1.14.0-gpu
 
 RUN rm /etc/apt/sources.list.d/cuda.list
 RUN rm /etc/apt/sources.list.d/nvidia-ml.list
@@ -31,7 +31,7 @@ ENV ROS_DISTRO melodic
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-melodic-ros-core=1.4.1-0* \
+    ros-melodic-ros-core \
     && rm -rf /var/lib/apt/lists/*
 
 # ros-base
@@ -44,24 +44,43 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && rm -rf /var/lib/apt/lists/*
 
 # bootstrap rosdep
-RUN export https_proxy="https://10.78.92.79:58088" && rosdep init && \
+RUN rosdep init && \
   rosdep update --rosdistro $ROS_DISTRO
-RUN unset https_proxy
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-melodic-ros-base=1.4.1-0* \
+    ros-melodic-ros-base \
     && rm -rf /var/lib/apt/lists/*
-
 # melodic-perception
 
 # install ros packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-melodic-perception=1.4.1-0* \
+    ros-melodic-perception \
     && rm -rf /var/lib/apt/lists/*
 
+
+# add user
+ARG myuser=mikexyl
+ARG USERNAME=$myuser
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+RUN usermod -a -G dialout $myuser
+
+# nvidia-container-runtime
+ENV NVIDIA_VISIBLE_DEVICES \
+    ${NVIDIA_VISIBLE_DEVICES:-all}
+ENV NVIDIA_DRIVER_CAPABILITIES \
+    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
+
 # setup entrypoint
-COPY ./ros_entrypoint.sh /
+COPY ros_entrypoint.sh /
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
 CMD ["bash"]
